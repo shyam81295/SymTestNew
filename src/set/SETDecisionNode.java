@@ -68,9 +68,9 @@ public class SETDecisionNode extends SETNode {
 
 	@Override
 	public IExpression getLatestValue(IIdentifier var) {
-		System.out.println("type: "+this.getClass());
-		System.out.println("Outgoing edge: "+this.getOutgoingEdgeList());
-		System.out.println("Incoming edge: "+this.mIncomingEdge);
+//		System.out.println("type: "+this.getClass());
+//		System.out.println("Outgoing edge: "+this.getOutgoingEdgeList());
+//		System.out.println("Incoming edge: "+this.mIncomingEdge);
 		if(this.mIncomingEdge == null) {
 			return null;
 		}

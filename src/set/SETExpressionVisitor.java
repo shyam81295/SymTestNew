@@ -22,7 +22,7 @@ public class SETExpressionVisitor implements IExprVisitor<IExpression> {
 
 	@Override
 	public void visit(IExpression exp) throws Exception {
-		System.out.println("Class of expression: "+exp.getClass());
+//		System.out.println("Class of expression: "+exp.getClass());
 		if(exp instanceof ConcreteConstant) {
 			this.visit((ConcreteConstant)exp);
 		}

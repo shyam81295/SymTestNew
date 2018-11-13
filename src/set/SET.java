@@ -136,6 +136,10 @@ public class SET implements IProgram {
 		}
 		return set;
 	}
+
+	public Set<SETEdge> getEdgeSet(){
+		return mSETEdgeSet;
+	}
 	
 	
 	@Override

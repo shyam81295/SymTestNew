@@ -1,18 +1,24 @@
 package see;
 
+import Solver.ISolver;
+import Solver.SolverResult;
+import Solver.Z3Solver;
 import cfg.ICFG;
 import cfg.ICFGBasicBlockNode;
 import cfg.ICFGDecisionNode;
 import cfg.ICFGNode;
-import expression.IExpression;
-import expression.IIdentifier;
-import expression.Type;
+import expression.*;
 import mycfg.CFGBasicBlockNode;
 import mycfg.CFGDecisionNode;
+import program.IProgram;
 import set.*;
 import statement.IStatement;
+import utilities.Pair;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class SEENew2 {
     private SET mSET;
@@ -30,17 +36,86 @@ public class SEENew2 {
         return mSET;
     }
 
+    public SETNode allPathSE (ICFG icfg, int depth) throws Exception{
+        //  startnodeCFG
+        ICFGBasicBlockNode startNode = icfg.getStartNode();
+        //  passing empty environment & startNode
+        SETNode startSETNode = this.singleStep(startNode,null);
+//        System.out.println((SETBasicBlockNode)startSETNode);
+//        System.out.println();
+        System.out.println(startSETNode);
+
+//        System.out.println(mSET.getStartNode().getIncomingEdge());
+
+        LinkedList< Pair<SETNode, Integer> > setNodeQueue = new LinkedList<>();
+        setNodeQueue.add(new Pair<>(startSETNode, 1));
+
+        while(!setNodeQueue.isEmpty()){
+            Pair<SETNode,Integer> pair = setNodeQueue.removeFirst();
+            SETNode pairSETNode = pair.getFirst();
+//            System.out.println(pairSETNode.getIncomingEdge().getTail());
+//            System.out.println(pairSETNode.getIncomingEdge().getHead());
+            Integer pairDepth = pair.getSecond();
+//            System.out.println(pairSETNode.getId());
+//            System.out.println(pairDepth);
+
+            if(pairDepth > depth){
+                continue;
+            }
+            ICFGNode correspondingICFGNode = pairSETNode.getCFGNode();
+//            System.out.println(correspondingICFGNode);
+
+            if(correspondingICFGNode instanceof ICFGBasicBlockNode){
+//                System.out.println(((ICFGBasicBlockNode) correspondingICFGNode).getSuccessorNode());
+                SETNode setNode = singleStep(((ICFGBasicBlockNode) correspondingICFGNode).getSuccessorNode(),pairSETNode);
+                setNodeQueue.add(new Pair<>(setNode,pairDepth+1));
+            }
+
+            if(correspondingICFGNode instanceof ICFGDecisionNode){
+                IExpression condition = ((ICFGDecisionNode) correspondingICFGNode).getCondition();
+
+                AndExpression andExpression1 = new AndExpression(this.getSET(),pairSETNode.getPathPredicate(),condition);
+                Set<IIdentifier> symVars = mSET.getVariables();
+                ISolver solver = new Z3Solver(symVars, andExpression1);
+                SolverResult solution = solver.solve();
+                //  if satisfiable
+                if(solution.getResult() == true){
+                    SETNode setNode = singleStep(((ICFGDecisionNode) correspondingICFGNode).getThenSuccessorNode(),pairSETNode);
+                    setNodeQueue.add(new Pair<>(setNode,pairDepth+1));
+                }
+
+                //  here we have to add "Not of the expression"
+                NotExpression notExpression = new NotExpression(this.getSET(),condition);
+                AndExpression andExpression2 = new AndExpression(this.getSET(),pairSETNode.getPathPredicate(),notExpression);
+                Set<IIdentifier> symVars2 = mSET.getVariables();
+                ISolver solver2 = new Z3Solver(symVars2, andExpression2);
+                SolverResult solution2 = solver2.solve();
+                //  if unsatisfiable
+                if(solution2.getResult() == true){
+                    SETNode setNode = singleStep(((ICFGDecisionNode) correspondingICFGNode).getElseSuccessorNode(),pairSETNode);
+                    setNodeQueue.add(new Pair<>(setNode,pairDepth+1));
+                }
+            }
+        }
+        return startSETNode;
+    }
+
 
     public SETNode singleStep(ICFGNode icfgNode, SETNode prevSetNode) throws Exception {
         //  for returning SETNode
         SETNode returnSETNode = null;
 
+        if(prevSetNode == null){
+            SETBasicBlockNode startSETNode = new SETBasicBlockNode(mSET,(ICFGBasicBlockNode)icfgNode);
+            return startSETNode;
+        }
         //  naya edge banao
         //  head is null, for just now, it will be initialised below soon.
         SETEdge newSETEdge = new SETEdge(mSET,prevSetNode,null);
 
         //  if icfgNode is BasicBlockNode
         if (icfgNode instanceof ICFGBasicBlockNode) {
+            //  startNode hai toh, sidha wohi node return kardo
             //  tail upar hi set ho gaya hai, head ke liye naya node banao
             returnSETNode = addNewSETBasicBlockNode(icfgNode,newSETEdge);
         }
@@ -64,6 +139,7 @@ public class SEENew2 {
         newSETEdge.setHead(newSETNode);
         newSETNode.setIncomingEdge(newSETEdge);
         this.mSET.addEdge(newSETEdge);
+//        System.out.println(mSET.getEdgeSet());
         this.computeStatementList(newSETNode);
         return newSETNode;
     }

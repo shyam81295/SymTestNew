@@ -178,7 +178,7 @@ public class CFG implements ICFG {
 			}
 		}
 		h.addIncomingEdge(edge);
-		System.out.println("IncomingEdge: "+h.getIncomingEdgeList());
+//		System.out.println("IncomingEdge: "+h.getIncomingEdgeList());
 		return edge;
 	}
 
