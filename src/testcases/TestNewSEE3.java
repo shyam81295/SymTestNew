@@ -20,7 +20,7 @@ import statement.Statement;
 
 import java.util.Set;
 
-public class TestNewSEE2 {
+public class TestNewSEE3 {
     @Test
     public void testNaya() throws Exception {
         // Why mCFG ? Because it is an inteface for Control Flow Graph
@@ -43,63 +43,63 @@ public class TestNewSEE2 {
         //  variables x & y
         Variable x = new Variable("x", mCFG);
         Variable y = new Variable("y", mCFG);
+        Variable p = new Variable("p", mCFG);
+        Variable q = new Variable("q", mCFG);
 
-        ICFGBasicBlockNode B = new CFGBasicBlockNode("B", mCFG);
-        Input i1 = new Input(mCFG);
-        Statement stmt1 = new Statement(mCFG, x, i1);
-        B.setStatement(stmt1);
-        mCFG.addBasicBlockNode(B);
+        True trueExpr = new True(mCFG);
+        ICFGDecisionNode B = new CFGDecisionNode(mCFG,trueExpr);
+        mCFG.addDecisionNode(B);
 
         ICFGBasicBlockNode C = new CFGBasicBlockNode("C", mCFG);
-        Input i2 = new Input(mCFG);
-        Statement stmt2 = new Statement(mCFG, y, i2);
-        C.setStatement(stmt2);
+        Input i1 = new Input(mCFG);
+        Statement stmt1 = new Statement(mCFG, x, i1);
+        C.setStatement(stmt1);
         mCFG.addBasicBlockNode(C);
 
-        LesserThanExpression expr3 = new LesserThanExpression(mCFG, x, y);
-        NotExpression nexpr1 = new NotExpression(mCFG,expr3);
-        ICFGDecisionNode D = new CFGDecisionNode(mCFG,nexpr1);
-        mCFG.addDecisionNode(D);
+        ICFGBasicBlockNode D = new CFGBasicBlockNode("D", mCFG);
+        Input i2 = new Input(mCFG);
+        Statement stmt2 = new Statement(mCFG, y, i2);
+        D.setStatement(stmt2);
+        mCFG.addBasicBlockNode(D);
 
-        ICFGBasicBlockNode E = new CFGBasicBlockNode("E", mCFG);
-        Statement stmt3 = new Statement(mCFG, x, CONSTANT_TWENTY);
-        E.setStatement(stmt3);
-        mCFG.addBasicBlockNode(E);
+        LesserThanExpression expr3 = new LesserThanExpression(mCFG, x, y);
+        ICFGDecisionNode E = new CFGDecisionNode(mCFG,expr3);
+        mCFG.addDecisionNode(E);
 
         ICFGBasicBlockNode F = new CFGBasicBlockNode("F", mCFG);
-        Statement stmt4 = new Statement(mCFG, x, CONSTANT_THIRTY);
-        F.setStatement(stmt4);
+        AddExpression addExpr1 = new AddExpression(mCFG,x,y);
+        Statement stmt3 = new Statement(mCFG, p, addExpr1);
+        F.setStatement(stmt3);
         mCFG.addBasicBlockNode(F);
 
-
-
-
+        ICFGBasicBlockNode G = new CFGBasicBlockNode("G", mCFG);
+        SubExpression subExpr1 = new SubExpression(mCFG,x,y);
+        Statement stmt4 = new Statement(mCFG, p, subExpr1);
+        G.setStatement(stmt4);
+        mCFG.addBasicBlockNode(G);
 //
-//        ICFGBasicBlockNode C = new CFGBasicBlockNode("C", mCFG);
-//        // Input i1 = new Input(mCFG)
-//        MulExpression expr1 = new MulExpression(mCFG,CONSTANT_TWO,x);
-//        AddExpression expr2 = new AddExpression(mCFG,expr1,CONSTANT_FIVE);
-//        AddExpression expr3 = new AddExpression(mCFG,expr2,CONSTANT_TWO);
-//        Statement stmt3 = new Statement(mCFG, y, expr3);
-//        C.setStatement(stmt3);
-//        mCFG.addBasicBlockNode(C);
-
-        //edges
+//
+//        //edges
         ICFEdge AB = new CFEdge("AB", mCFG, A, B);
         ICFEdge BC = new CFEdge("BC", mCFG, B, C);
         ICFEdge CD = new CFEdge("CD", mCFG, C, D);
         ICFEdge DE = new CFEdge("DE", mCFG, D, E);
-        ICFEdge DF = new CFEdge("DF", mCFG, D, F);
-        ICFEdge EW = new CFEdge("EW", mCFG, E, W);
-        ICFEdge FW = new CFEdge("FW", mCFG, F, W);
+        ICFEdge EF = new CFEdge("DF", mCFG, E, F);
+        ICFEdge EG = new CFEdge("EG", mCFG, E, G);
+        ICFEdge FB = new CFEdge("FB", mCFG, F, B);
+        ICFEdge GB = new CFEdge("GB", mCFG, G, B);
+
 
 //        D.setThenEdge(DE);
 //        D.setElseEdge(DF);
 
+//        System.out.println(mCFG.getNodeSet());
+//        System.out.println(mCFG.getEdgeSet());
+
         SEENew2 seeNew2 = new SEENew2(mCFG);
 
         SETNode setNode6 = seeNew2.allPathSE(mCFG,5);
-
+//
 //        System.out.println(seeNew2.getSET().getStartNode().getIncomingEdge());
 //        System.out.println(seeNew2.getSET().getStartNode().getCFGNode());
 //
