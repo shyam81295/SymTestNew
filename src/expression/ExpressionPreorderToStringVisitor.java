@@ -120,6 +120,14 @@ public class ExpressionPreorderToStringVisitor implements IExprVisitor<String> {
 		this.mStack.push(s);
 	}
 
+	@Override
+	public void visit(Input exp) {
+		// TODO Auto-generated method stub
+		System.out.println("SHYAM");
+//		this.mStack.push(exp.toString());
+
+	}
+
 	public void visit(IExpression exp) throws Exception {
 		if(exp instanceof ConcreteConstant) {
 			this.visit((ConcreteConstant)exp);
@@ -193,10 +201,6 @@ public class ExpressionPreorderToStringVisitor implements IExprVisitor<String> {
 		return this.mStack.peek();
 	}
 
-	@Override
-	public void visit(Input exp) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }

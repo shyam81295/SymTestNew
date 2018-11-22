@@ -4,6 +4,7 @@ import expression.ExpressionPreorderToStringVisitor;
 import expression.IExpression;
 import expression.IIdentifier;
 import expression.Type;
+import set.SETExpressionVisitor;
 
 import java.io.*;
 import java.util.*;
@@ -11,7 +12,8 @@ import java.util.*;
 
 public class Z3Solver implements ISolver {
 
-	IExpression mExpression;
+    IExpression mExpression;
+    //	IExpression mExpression;
 	Set<IIdentifier> mVariables;
 
 	public Z3Solver(Set<IIdentifier> symVars, IExpression exp) {
@@ -20,8 +22,7 @@ public class Z3Solver implements ISolver {
 	}
 
 	public SolverResult solve() throws Exception {
-		String z3Input = Z3Solver.makeZ3Input(this.mVariables,
-				this.mExpression);
+		String z3Input = Z3Solver.makeZ3Input(this.mVariables, this.mExpression);
 
 		 System.out.println("z3 input :\n" + z3Input);
 
@@ -45,18 +46,19 @@ public class Z3Solver implements ISolver {
 	 * Uses Z3 Solver
 	 * @param symVars
 	 * @param expression
-	 * @return
+     * @return
 	 * @throws Exception
 	 */
-	private static String makeZ3Input(Set<IIdentifier> symVars,
-			IExpression expression) throws Exception {
+	private static String makeZ3Input(Set<IIdentifier> symVars, IExpression expression) throws Exception {
 		
 
-		ExpressionPreorderToStringVisitor preVisitor = new ExpressionPreorderToStringVisitor();
+//		SETExpressionVisitor preVisitor = new SETExpressionVisitor();
+        ExpressionPreorderToStringVisitor preVisitor = new ExpressionPreorderToStringVisitor();
 
 		preVisitor.visit(expression);
 		String formula = preVisitor.getValue();
 
+//        String formula = preVisitor.getValue().toString();
 		String s = "";
 		for (IIdentifier v : symVars) {
 			s = s + "(declare-fun " + v.getName() + " () "

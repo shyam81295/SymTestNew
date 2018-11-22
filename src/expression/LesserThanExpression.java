@@ -16,6 +16,7 @@ public class LesserThanExpression extends Expression implements IBinaryExpressio
 		}
 		this.mLHS = lhs;
 		this.mRHS = rhs;
+//		System.out.println(lhs.getProgram());
 	}
 
 	public IExpression getLHS() {

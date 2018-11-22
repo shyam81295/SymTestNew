@@ -51,14 +51,14 @@ public class TestNewSEE2 {
         mCFG.addBasicBlockNode(B);
 
         ICFGBasicBlockNode C = new CFGBasicBlockNode("C", mCFG);
-        Input i2 = new Input(mCFG);
-        Statement stmt2 = new Statement(mCFG, y, i2);
+//        Input i2 = new Input(mCFG);
+        Statement stmt2 = new Statement(mCFG, y, CONSTANT_TWO);
         C.setStatement(stmt2);
         mCFG.addBasicBlockNode(C);
 
         LesserThanExpression expr3 = new LesserThanExpression(mCFG, x, y);
-        NotExpression nexpr1 = new NotExpression(mCFG,expr3);
-        ICFGDecisionNode D = new CFGDecisionNode(mCFG,nexpr1);
+//        NotExpression nexpr1 = new NotExpression(mCFG,expr3);
+        ICFGDecisionNode D = new CFGDecisionNode(mCFG,expr3);
         mCFG.addDecisionNode(D);
 
         ICFGBasicBlockNode E = new CFGBasicBlockNode("E", mCFG);
@@ -95,10 +95,14 @@ public class TestNewSEE2 {
 
 //        D.setThenEdge(DE);
 //        D.setElseEdge(DF);
-
+        System.out.println("creating seeNew2 object : " + mCFG);
         SEENew2 seeNew2 = new SEENew2(mCFG);
+        System.out.println("calling all path SE : " + mCFG);
 
         SETNode setNode6 = seeNew2.allPathSE(mCFG,5);
+        System.out.println("all path SE  finished: " + setNode6);
+
+        System.out.println();
 
 //        System.out.println(seeNew2.getSET().getStartNode().getIncomingEdge());
 //        System.out.println(seeNew2.getSET().getStartNode().getCFGNode());

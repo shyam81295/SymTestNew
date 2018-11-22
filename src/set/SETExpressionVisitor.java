@@ -1,6 +1,7 @@
 package set;
 
 import expression.*;
+import mycfg.CFGNode;
 import program.IProgram;
 import visitors.IExprVisitor;
 
@@ -98,14 +99,27 @@ public class SETExpressionVisitor implements IExprVisitor<IExpression> {
 	@Override
 	public void visit(Input exp) {
 		IProgram p = this.mNode.getSET();
+//        for(SETNode node:((SET) p).getNodeSet()){
+//            System.out.println("p ka node set:" + node.getCFGNode());
+//        }
 		Set<IIdentifier> variables = p.getVariables();
+        for(IIdentifier var:variables){
+//            System.out.println("p ka vars:" + var);
+        }
+//        System.out.println("variables = " + variables);
 		Set<String> names = new HashSet<String>();
 		for(IIdentifier v : variables) {
 			names.add(v.getName());
 		}
+//        System.out.println("Names:"+names);
 		String name = SETExpressionVisitor.generateNewVariableName(names);
 		try {
-			this.mStack.push(new Variable(name, this.mContextType, this.mNode.getSET()));
+		    //here new variable is generated.
+//            System.out.println("Before before adding variables:"+this.mNode.getSET().getVariables());
+            Variable x = new Variable(name, this.mContextType, this.mNode.getSET());
+			this.mStack.push(x);
+//            System.out.println("Before adding variables:"+this.mNode.getSET().getVariables());
+//            System.out.println("After adding variables:"+this.mNode.getSET().getVariables());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -194,6 +208,7 @@ public class SETExpressionVisitor implements IExprVisitor<IExpression> {
 		exp.accept(this);
 		IExpression lhs = this.mStack.pop();
 		IExpression rhs = this.mStack.pop();
+		System.out.println(new LesserThanExpression(this.mNode.getSET(), lhs, rhs));
 		this.mStack.push(new LesserThanExpression(this.mNode.getSET(), lhs, rhs));
 	}
 	
@@ -212,6 +227,7 @@ public class SETExpressionVisitor implements IExprVisitor<IExpression> {
 
 	@Override
 	public void visit(Variable exp) {
+		System.out.println("Latest Value:"+this.mNode.getLatestValue(exp));
 		this.mStack.push(this.mNode.getLatestValue(exp));
 	}
 	
@@ -270,5 +286,9 @@ public class SETExpressionVisitor implements IExprVisitor<IExpression> {
 	@Override
 	public IExpression getValue() {
 		return this.mStack.peek();
+	}
+
+	public Stack<IExpression> getStack() {
+		return mStack;
 	}
 }
